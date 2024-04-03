@@ -25,9 +25,7 @@ public class Person implements Serializable {
         this.id = id;
     }
 
-    public String getAddress() {
-        return address;
-    }
+    public String getAddress() { return address; }
 
     public void setAddress(String address) {
         this.address = address;

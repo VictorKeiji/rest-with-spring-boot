@@ -14,15 +14,13 @@ public class PersonServices {
     private final AtomicLong counter = new AtomicLong();
     private Logger logger = Logger.getLogger(PersonServices.class.getName());
 
-    public Person findById(String id) {
-
-        logger.info("Finding one person...");
+    private Person mockPerson(int i) {
 
         Person person = new Person();
         person.setId(counter.incrementAndGet());
-        person.setFirstName("Victor");
-        person.setLastName("Keiji");
-        person.setAddress("São Paulo - SP - Brasil");
+        person.setFirstName("PersonName" + i);
+        person.setLastName("LastName" + i);
+        person.setAddress("Address" + i);
         person.setGender("M");
         return person;
     }
@@ -39,14 +37,35 @@ public class PersonServices {
         return persons;
     }
 
-    private Person mockPerson(int i) {
+    public Person findById(String id) {
+
+        logger.info("Finding one person...");
 
         Person person = new Person();
         person.setId(counter.incrementAndGet());
-        person.setFirstName("PersonName" + i);
-        person.setLastName("LastName" + i);
-        person.setAddress("Address" + i);
+        person.setFirstName("Victor");
+        person.setLastName("Keiji");
+        person.setAddress("São Paulo - SP - Brasil");
         person.setGender("M");
         return person;
+    }
+
+    public Person create(Person person) {
+
+        logger.info("Creating one person!");
+
+        return person;
+    }
+
+    public Person update(Person person) {
+
+        logger.info("Updating one person!");
+
+        return person;
+    }
+
+    public void delete(String id) {
+
+        logger.info("Deleting one person!");
     }
 }
