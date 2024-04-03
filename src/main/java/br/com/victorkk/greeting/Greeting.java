@@ -1,4 +1,4 @@
-package br.com.victorkk.restwithspringboot;
+package br.com.victorkk.greeting;
 
 public class Greeting {
 

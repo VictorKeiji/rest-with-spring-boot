@@ -1,5 +1,6 @@
-package br.com.victorkk.restwithspringboot;
+package br.com.victorkk.controller;
 
+import br.com.victorkk.greeting.Greeting;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
