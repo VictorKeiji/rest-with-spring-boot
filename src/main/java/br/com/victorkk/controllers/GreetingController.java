@@ -1,4 +1,4 @@
-package br.com.victorkk.controller;
+package br.com.victorkk.controllers;
 
 import br.com.victorkk.greeting.Greeting;
 import org.springframework.web.bind.annotation.RequestMapping;
