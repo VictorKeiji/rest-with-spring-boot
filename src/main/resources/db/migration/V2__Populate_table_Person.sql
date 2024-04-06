@@ -1,0 +1,11 @@
+INSERT INTO `person` VALUES (1,'João','Paulo','Brasil','M'),
+                            (2,'Aderlan','Silva','Brasil','M'),
+                            (3,'Hayner','William','Brasil','M'),
+                            (4,'Gil','Silva','Brasil','M'),
+                            (5,'João','Schmidt','Brasil','M'),
+                            (6,'Joaquim','Henrique','Brasil','M'),
+                            (7,'Otero','Scorpion','Venezuela','M'),
+                            (8,'Diego','Pituca','Brasil','M'),
+                            (9,'Julio','Furch','Argentina','M'),
+                            (10,'Giuliano','Victor','Brasil','M'),
+                            (11,'Guilherme','Augusto','Brasil','M');
