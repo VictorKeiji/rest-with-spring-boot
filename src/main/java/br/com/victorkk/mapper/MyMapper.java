@@ -8,9 +8,9 @@ import org.mapstruct.factory.Mappers;
 import java.util.List;
 
 @Mapper
-public interface PersonMapper {
+public interface MyMapper {
 
-    PersonMapper INSTANCE = Mappers.getMapper(PersonMapper.class);
+    MyMapper INSTANCE = Mappers.getMapper(MyMapper.class);
 
     List<PersonVO> parseListPersonVOs(List<Person> persons);
     List<Person> parseListPersons(List<PersonVO> persons);

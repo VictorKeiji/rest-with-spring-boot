@@ -2,7 +2,7 @@ package br.com.victorkk.services;
 
 import br.com.victorkk.data.vo.v1.PersonVO;
 import br.com.victorkk.exceptions.ResourceNotFoundException;
-import br.com.victorkk.mapper.PersonMapper;
+import br.com.victorkk.mapper.MyMapper;
 import br.com.victorkk.repositories.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class PersonServices {
 
         logger.info("Finding all people!");
 
-        return PersonMapper.INSTANCE.parseListPersonVOs(repository.findAll());
+        return MyMapper.INSTANCE.parseListPersonVOs(repository.findAll());
     }
 
     public PersonVO findById(Long id) {
@@ -31,15 +31,15 @@ public class PersonServices {
 
         var entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
-        return PersonMapper.INSTANCE.personToPersonVO(entity);
+        return MyMapper.INSTANCE.personToPersonVO(entity);
     }
 
     public PersonVO create(PersonVO person) {
 
         logger.info("Creating one person!");
 
-        var entity = PersonMapper.INSTANCE.personVOToPerson(person);
-        return PersonMapper.INSTANCE.personToPersonVO(repository.save(entity));
+        var entity = MyMapper.INSTANCE.personVOToPerson(person);
+        return MyMapper.INSTANCE.personToPersonVO(repository.save(entity));
     }
 
     public PersonVO update(PersonVO person) {
@@ -54,7 +54,7 @@ public class PersonServices {
         entity.setAddress(person.getAddress());
         entity.setGender(person.getGender());
 
-        return PersonMapper.INSTANCE.personToPersonVO(repository.save(entity));
+        return MyMapper.INSTANCE.personToPersonVO(repository.save(entity));
     }
 
     public void delete(Long id) {
