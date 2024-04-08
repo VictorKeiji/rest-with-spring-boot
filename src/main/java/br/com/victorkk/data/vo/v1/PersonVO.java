@@ -1,15 +1,17 @@
 package br.com.victorkk.data.vo.v1;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class PersonVO implements Serializable {
+public class PersonVO extends RepresentationModel<PersonVO> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private Long id;
+    private Long personId;
 
     private String firstName;
 
@@ -21,12 +23,12 @@ public class PersonVO implements Serializable {
 
     public PersonVO() {}
 
-    public Long getId() {
-        return id;
+    public Long getPersonId() {
+        return personId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setPersonId(Long personId) {
+        this.personId = personId;
     }
 
     public String getAddress() { return address; }
@@ -64,11 +66,11 @@ public class PersonVO implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PersonVO person = (PersonVO) o;
-        return Objects.equals(id, person.id) && Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && Objects.equals(address, person.address) && Objects.equals(gender, person.gender);
+        return Objects.equals(personId, person.personId) && Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && Objects.equals(address, person.address) && Objects.equals(gender, person.gender);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, address, gender);
+        return Objects.hash(personId, firstName, lastName, address, gender);
     }
 }
