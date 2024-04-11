@@ -2,6 +2,7 @@ package br.com.victorkk.services;
 
 import br.com.victorkk.controllers.PersonController;
 import br.com.victorkk.data.vo.v1.PersonVO;
+import br.com.victorkk.exceptions.RequiredObjectIsNullException;
 import br.com.victorkk.exceptions.ResourceNotFoundException;
 import br.com.victorkk.mapper.MyMapper;
 import br.com.victorkk.repositories.PersonRepository;
@@ -23,7 +24,6 @@ public class PersonServices {
     PersonRepository repository;
 
     public List<PersonVO> findAll() {
-
         logger.info("Finding all people!");
 
         var persons = MyMapper.INSTANCE.parseListPersonVOs(repository.findAll());
@@ -34,7 +34,6 @@ public class PersonServices {
     }
 
     public PersonVO findById(Long id) {
-
         logger.info("Finding one person...");
 
         var entity = repository.findById(id)
@@ -46,7 +45,7 @@ public class PersonServices {
     }
 
     public PersonVO create(PersonVO personVo) {
-
+        if (personVo == null) throw new RequiredObjectIsNullException();
         logger.info("Creating one person!");
 
         var entity = MyMapper.INSTANCE.personVOToPerson(personVo);
@@ -57,7 +56,7 @@ public class PersonServices {
     }
 
     public PersonVO update(PersonVO personVo) {
-
+        if (personVo == null) throw new RequiredObjectIsNullException();
         logger.info("Updating one person!");
 
         var entity = repository.findById(personVo.getPersonId())
@@ -67,7 +66,6 @@ public class PersonServices {
         entity.setLastName(personVo.getLastName());
         entity.setAddress(personVo.getAddress());
         entity.setGender(personVo.getGender());
-
         var vo = MyMapper.INSTANCE.personToPersonVO(repository.save(entity));
 
         vo.add(linkTo(methodOn(PersonController.class).findById(vo.getPersonId())).withSelfRel());
@@ -75,7 +73,6 @@ public class PersonServices {
     }
 
     public void delete(Long id) {
-
         logger.info("Deleting one person!");
 
         var entity = repository.findById(id)

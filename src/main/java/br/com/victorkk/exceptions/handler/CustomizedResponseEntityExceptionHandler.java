@@ -1,6 +1,7 @@
 package br.com.victorkk.exceptions.handler;
 
 import br.com.victorkk.exceptions.ExceptionResponse;
+import br.com.victorkk.exceptions.RequiredObjectIsNullException;
 import br.com.victorkk.exceptions.ResourceNotFoundException;
 import br.com.victorkk.exceptions.UnsupportedMathOperationException;
 import org.springframework.http.HttpStatus;
@@ -25,14 +26,6 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(UnsupportedMathOperationException.class)
-    public final ResponseEntity<ExceptionResponse> handleBadRequestExceptions(Exception ex, WebRequest req) {
-
-        ExceptionResponse exceptionResponse = new ExceptionResponse(
-                new Date(), ex.getMessage(), req.getDescription(false));
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(ResourceNotFoundException.class)
     public final ResponseEntity<ExceptionResponse> handleNotFoundExceptions(Exception ex, WebRequest req) {
 
@@ -41,4 +34,19 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(RequiredObjectIsNullException.class)
+    public final ResponseEntity<ExceptionResponse> handleBadRequestExceptions2(Exception ex, WebRequest req) {
+
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                new Date(), ex.getMessage(), req.getDescription(false));
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UnsupportedMathOperationException.class)
+
+    public final ResponseEntity<ExceptionResponse> handleBadRequestExceptions1(Exception ex, WebRequest req) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                new Date(), ex.getMessage(), req.getDescription(false));
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
 }
