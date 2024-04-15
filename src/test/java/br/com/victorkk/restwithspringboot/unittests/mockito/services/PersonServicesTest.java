@@ -103,12 +103,12 @@ class PersonServicesTest {
         Person entity = input.mockEntity(1);
 
         Person persisted = entity;
-        //persisted.setId(1L);        // id inicial
+        //persisted.setId(1L);
 
         PersonVO vo = input.mockVO(1);
         //vo.setPersonId(1L);
 
-        when(repository.save(entity)).thenReturn(persisted); // o .save irá atribuir novo id
+        when(repository.save(entity)).thenReturn(persisted);
 
         var result = service.create(vo);
         assertNotNull(result);

@@ -10,10 +10,10 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfig {
 
     @Bean    // Objeto gerenciado por SpringIOC Container (
-    public OpenAPI customOpenAPI() {
+    OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("RESTful API with Java 18 and Spring Boot 3")
+                        .title("RESTful API with Java 21 and Spring Boot 3")
                         .version("v1")
                         .description("Udemy Course")
                         .termsOfService("terms")
