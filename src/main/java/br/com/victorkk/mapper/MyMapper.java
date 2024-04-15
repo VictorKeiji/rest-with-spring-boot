@@ -1,6 +1,8 @@
 package br.com.victorkk.mapper;
 
+import br.com.victorkk.data.vo.v1.BookVO;
 import br.com.victorkk.data.vo.v1.PersonVO;
+import br.com.victorkk.model.Book;
 import br.com.victorkk.model.Person;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,6 +15,7 @@ public interface MyMapper {
 
     MyMapper INSTANCE = Mappers.getMapper(MyMapper.class);
 
+    // Person
     @Mapping(target="personId", source="id")
     List<PersonVO> parseListPersonVOs(List<Person> persons);
 
@@ -24,4 +27,17 @@ public interface MyMapper {
 
     @Mapping(target="id", source="personId")
     Person personVOToPerson(PersonVO personVO);
+
+    // Book
+    @Mapping(target="bookId", source="id")
+    List<BookVO> parseListBookVOs(List<Book> books);
+
+    @Mapping(target="id", source="bookId")
+    List<Book> parseListBooks(List<BookVO> books);
+
+    @Mapping(target="bookId", source="id")
+    BookVO bookToBookVO(Book book);
+
+    @Mapping(target="id", source="bookId")
+    Book bookVOToBook(BookVO bookVO);
 }
