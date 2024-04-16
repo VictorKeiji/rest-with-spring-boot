@@ -1,4 +1,4 @@
-package br.com.victorkk.restwithspringboot.integrationtest.testcontainers;
+package br.com.victorkk.restwithspringboot.integrationtests.testcontainers;
 
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;

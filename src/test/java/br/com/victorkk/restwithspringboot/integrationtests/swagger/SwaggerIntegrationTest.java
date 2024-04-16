@@ -1,10 +1,10 @@
-package br.com.victorkk.restwithspringboot.integrationtest.swagger;
+package br.com.victorkk.restwithspringboot.integrationtests.swagger;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 import br.com.victorkk.restwithspringboot.configs.TestConfigs;
-import br.com.victorkk.restwithspringboot.integrationtest.testcontainers.AbstractIntegrationTest;
+import br.com.victorkk.restwithspringboot.integrationtests.testcontainers.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
