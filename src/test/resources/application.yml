@@ -1,3 +1,10 @@
+cors:
+  originPatterns: http://localhost:8080,http://localhost:3000
+security:
+  jwt:
+    token:
+      secret-key: 53ccr37
+      expire-length: 3600000
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -9,10 +16,10 @@ spring:
         # dialect: org.hibernate.dialect.MySQLDialect
     show_sql: false
 spring-doc:
-  pathsToMatch: /api/**/v1/**
+  pathsToMatch:
+    - /auth/**
+    - /api/**/v1/**
   swagger-ui:
     use-root-path: true
 server:
   port: 8888
-cors:
-  originPatterns: http://localhost:8080,http://localhost:3000
