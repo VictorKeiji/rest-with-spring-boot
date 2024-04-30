@@ -1,9 +1,6 @@
 package br.com.victorkk.exceptions.handler;
 
-import br.com.victorkk.exceptions.ExceptionResponse;
-import br.com.victorkk.exceptions.RequiredObjectIsNullException;
-import br.com.victorkk.exceptions.ResourceNotFoundException;
-import br.com.victorkk.exceptions.UnsupportedMathOperationException;
+import br.com.victorkk.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -43,10 +40,16 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     }
 
     @ExceptionHandler(UnsupportedMathOperationException.class)
-
     public final ResponseEntity<ExceptionResponse> handleBadRequestExceptions1(Exception ex, WebRequest req) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 new Date(), ex.getMessage(), req.getDescription(false));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidJwtAuthenticationException.class)
+    public final ResponseEntity<ExceptionResponse> handleInvalidJwtAuthenticationException(Exception ex, WebRequest req) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                new Date(), ex.getMessage(), req.getDescription(false));
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.FORBIDDEN);
     }
 }
