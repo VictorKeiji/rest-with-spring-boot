@@ -22,7 +22,6 @@ public class BookController {
 
     @Autowired
     private BookServices service;
-    // = private BookServices service = new BookServices();
 
     //@CrossOrigin(origins = "http://localhost:8080") >>> Cross Origin declarado globalmente em config/webconfig
     @GetMapping(
@@ -63,7 +62,6 @@ public class BookController {
         return service.findById(id);
     }
 
-    //@CrossOrigin(origins = "http://localhost:8080") >>> Cross Origin declarado globalmente em config/webconfig
     @PostMapping(
         consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
         produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML})
