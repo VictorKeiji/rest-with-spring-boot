@@ -1,8 +1,10 @@
-package br.com.victorkk.restwithspringboot.integrationtests.controller;
+package br.com.victorkk.restwithspringboot.integrationtests.controller.cors;
 
 import br.com.victorkk.restwithspringboot.configs.TestConfigs;
 import br.com.victorkk.restwithspringboot.integrationtests.testcontainers.AbstractIntegrationTest;
+import br.com.victorkk.restwithspringboot.integrationtests.vo.AccountCredentialsTestVO;
 import br.com.victorkk.restwithspringboot.integrationtests.vo.BookTestVO;
+import br.com.victorkk.restwithspringboot.integrationtests.vo.TokenTestVO;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
@@ -24,15 +26,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class BookControllerJsonTest extends AbstractIntegrationTest {
+public class BookControllerCorsJsonTest extends AbstractIntegrationTest {
 
 	private static RequestSpecification specification;
 	private static ObjectMapper objectMapper;
 	private static BookTestVO book;
-
-	private static final Instant instant = LocalDate.parse("2017-11-07")
-			.atStartOfDay(ZoneId.of("UTC")).toInstant();
-	private static final Date date = Date.from(instant);
 
 	@BeforeAll
 	public static void setUp() {
@@ -43,20 +41,36 @@ public class BookControllerJsonTest extends AbstractIntegrationTest {
 	}
 
 	@Test
+	@Order(0)
+	public void authorization() {
+		AccountCredentialsTestVO user = new AccountCredentialsTestVO("victor", "admin123");
+
+		var accessToken = given()
+				.basePath("/auth/signin")
+				.port(TestConfigs.SERVER_PORT)
+				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.body(user)
+				.when().post()
+				.then().statusCode(200).extract().body().as(TokenTestVO.class)
+				.getAccessToken();
+
+		specification = new RequestSpecBuilder()
+				.addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
+				.setBasePath("/api/book/v1")
+				.setPort(TestConfigs.SERVER_PORT)
+				.addFilter(new RequestLoggingFilter(LogDetail.ALL))
+				.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
+				.build();
+	}
+
+	@Test
 	@Order(1)
 	public void testCreate() throws IOException {
 		mockBook();
 
-		specification = new RequestSpecBuilder()
-				.addHeader(TestConfigs.HEADER_PARAM_ORIGIN, "http://localhost:8080")
-				.setBasePath("/api/book/v1")
-				.setPort(TestConfigs.SERVER_PORT)
-					.addFilter(new RequestLoggingFilter(LogDetail.ALL))
-					.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
-				.build();
-
 		var content = given().spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.header(TestConfigs.HEADER_PARAM_ORIGIN, "http://localhost:8080")
 					.body(book)
 				.when().post()
 				.then().statusCode(200).extract().body().asString();
@@ -68,13 +82,11 @@ public class BookControllerJsonTest extends AbstractIntegrationTest {
 
 		assertNotNull(persistedBook.getBookId());
 		assertNotNull(persistedBook.getAuthor());
-		assertNotNull(persistedBook.getLaunchDate());
 		assertNotNull(persistedBook.getPrice());
 		assertNotNull(persistedBook.getTitle());
 
 		assertTrue(persistedBook.getBookId() > 0);
 		assertEquals("William Shakespeare", persistedBook.getAuthor());
-		assertEquals(date, persistedBook.getLaunchDate());
 		assertEquals(45.0, persistedBook.getPrice());
 		assertEquals("Hamlet", persistedBook.getTitle());
 	}
@@ -84,16 +96,9 @@ public class BookControllerJsonTest extends AbstractIntegrationTest {
 	public void testCreateWithWrongOrigin() throws IOException {
 		mockBook();
 
-		specification = new RequestSpecBuilder()
-				.addHeader(TestConfigs.HEADER_PARAM_ORIGIN, "https://stackoverflow.com/")
-				.setBasePath("/api/book/v1")
-				.setPort(TestConfigs.SERVER_PORT)
-					.addFilter(new RequestLoggingFilter(LogDetail.ALL))
-					.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
-				.build();
-
 		var content = given().spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.header(TestConfigs.HEADER_PARAM_ORIGIN, "https://stackoverflow.com/")
 					.body(book)
 				.when().post()
 				.then().statusCode(403).extract().body().asString();
@@ -107,16 +112,9 @@ public class BookControllerJsonTest extends AbstractIntegrationTest {
 	public void testFindById() throws IOException {
 		mockBook();
 
-		specification = new RequestSpecBuilder()
-				.addHeader(TestConfigs.HEADER_PARAM_ORIGIN, "http://localhost:8080")
-				.setBasePath("/api/book/v1")
-				.setPort(TestConfigs.SERVER_PORT)
-				.addFilter(new RequestLoggingFilter(LogDetail.ALL))
-				.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
-				.build();
-
 		var content = given().spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.header(TestConfigs.HEADER_PARAM_ORIGIN, "http://localhost:8080")
 					.pathParam("bookId", book.getBookId())
 				.when().get("{bookId}")
 				.then().statusCode(200).extract().body().asString();
@@ -128,13 +126,11 @@ public class BookControllerJsonTest extends AbstractIntegrationTest {
 
 		assertNotNull(persistedBook.getBookId());
 		assertNotNull(persistedBook.getAuthor());
-		assertNotNull(persistedBook.getLaunchDate());
 		assertNotNull(persistedBook.getPrice());
 		assertNotNull(persistedBook.getTitle());
 
 		assertTrue(persistedBook.getBookId() > 0);
 		assertEquals("William Shakespeare", persistedBook.getAuthor());
-		//assertEquals(date, persistedBook.getLaunchDate());
 		assertEquals(45.0, persistedBook.getPrice());
 		assertEquals("Hamlet", persistedBook.getTitle());
 	}
@@ -144,16 +140,9 @@ public class BookControllerJsonTest extends AbstractIntegrationTest {
 	public void testFindByIdWithWrongOrigin() throws IOException {
 		mockBook();
 
-		specification = new RequestSpecBuilder()
-				.addHeader(TestConfigs.HEADER_PARAM_ORIGIN, "https://stackoverflow.com/")
-				.setBasePath("/api/book/v1")
-				.setPort(TestConfigs.SERVER_PORT)
-				.addFilter(new RequestLoggingFilter(LogDetail.ALL))
-				.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
-				.build();
-
 		var content = given().spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.header(TestConfigs.HEADER_PARAM_ORIGIN, "https://stackoverflow.com/")
 					.pathParam("bookId", book.getBookId())
 				.when().get("{bookId}")
 				.then().statusCode(403).extract().body().asString();
@@ -164,7 +153,6 @@ public class BookControllerJsonTest extends AbstractIntegrationTest {
 
 	private void mockBook()  {
 		book.setAuthor("William Shakespeare");
-		book.setLaunchDate(date);
 		book.setPrice(45.0);
 		book.setTitle("Hamlet");
 	}

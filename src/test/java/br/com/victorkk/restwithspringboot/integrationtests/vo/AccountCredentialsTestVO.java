@@ -1,20 +1,23 @@
-package br.com.victorkk.data.vo.v1.security;
+package br.com.victorkk.restwithspringboot.integrationtests.vo;
+
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-public class AccountCredentialsVO implements Serializable {
+@XmlRootElement
+public class AccountCredentialsTestVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private String username;
     private String password;
 
-    public AccountCredentialsVO() {}
+    public AccountCredentialsTestVO() {}
 
-    public AccountCredentialsVO(String password, String username) {
-        this.password = password;
+    public AccountCredentialsTestVO(String username, String password) {
         this.username = username;
+        this.password = password;
     }
 
     public String getPassword() {
@@ -37,7 +40,7 @@ public class AccountCredentialsVO implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AccountCredentialsVO that = (AccountCredentialsVO) o;
+        AccountCredentialsTestVO that = (AccountCredentialsTestVO) o;
         return Objects.equals(username, that.username) && Objects.equals(password, that.password);
     }
 
