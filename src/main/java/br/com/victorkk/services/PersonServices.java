@@ -6,6 +6,7 @@ import br.com.victorkk.exceptions.RequiredObjectIsNullException;
 import br.com.victorkk.exceptions.ResourceNotFoundException;
 import br.com.victorkk.mapper.MyMapper;
 import br.com.victorkk.repositories.PersonRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -69,6 +70,19 @@ public class PersonServices {
         var vo = MyMapper.INSTANCE.personToPersonVO(repository.save(entity));
 
         vo.add(linkTo(methodOn(PersonController.class).findById(vo.getPersonId())).withSelfRel());
+        return vo;
+    }
+
+    @Transactional
+    public PersonVO disablePerson(Long id) {
+        logger.info("Disabling one person...");
+        repository.disablePerson(id);
+
+        var entity = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+        var vo = MyMapper.INSTANCE.personToPersonVO(entity);
+
+        vo.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
         return vo;
     }
 
