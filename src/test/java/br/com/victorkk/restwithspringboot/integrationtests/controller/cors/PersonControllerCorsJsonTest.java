@@ -156,5 +156,6 @@ public class PersonControllerCorsJsonTest extends AbstractIntegrationTest {
 		person.setLastName("DubGod");
 		person.setAddress("Brasil");
 		person.setGender("M");
+		person.setEnabled(true);
 	}
 }

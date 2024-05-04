@@ -6,10 +6,9 @@ import br.com.victorkk.restwithspringboot.integrationtests.testcontainers.Abstra
 import br.com.victorkk.restwithspringboot.integrationtests.vo.AccountCredentialsTestVO;
 import br.com.victorkk.restwithspringboot.integrationtests.vo.PersonTestVO;
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -92,6 +91,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 		assertNotNull(persistedPerson.getLastName());
 		assertNotNull(persistedPerson.getAddress());
 		assertNotNull(persistedPerson.getGender());
+		assertTrue(persistedPerson.getEnabled());
 
 		assertTrue(persistedPerson.getPersonId() > 0);
 		assertEquals("Willian", persistedPerson.getFirstName());
@@ -122,6 +122,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 		assertNotNull(persistedPerson.getLastName());
 		assertNotNull(persistedPerson.getAddress());
 		assertNotNull(persistedPerson.getGender());
+		assertTrue(persistedPerson.getEnabled());
 
 		assertEquals(person.getPersonId(), persistedPerson.getPersonId());
 		assertEquals("Willian", persistedPerson.getFirstName());
@@ -132,11 +133,40 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 
 	@Test
 	@Order(3)
+	public void testDisableById() throws IOException {
+
+		var content = given().spec(specification)
+				.contentType(TestConfigs.CONTENT_TYPE_XML)
+				.accept(TestConfigs.CONTENT_TYPE_XML)
+				.pathParam("id", person.getPersonId())
+				.when().patch("{id}")
+				.then().statusCode(200).extract().body().asString();
+
+		PersonTestVO persistedPerson = objectMapper.readValue(content, PersonTestVO.class);
+		person = persistedPerson;
+
+		assertNotNull(persistedPerson);
+
+		assertNotNull(persistedPerson.getPersonId());
+		assertNotNull(persistedPerson.getFirstName());
+		assertNotNull(persistedPerson.getLastName());
+		assertNotNull(persistedPerson.getAddress());
+		assertNotNull(persistedPerson.getGender());
+		assertFalse(persistedPerson.getEnabled());
+
+		assertEquals(person.getPersonId(), persistedPerson.getPersonId());
+		assertEquals("Willian", persistedPerson.getFirstName());
+		assertEquals("do Bigode", persistedPerson.getLastName());
+		assertEquals("Brasil", persistedPerson.getAddress());
+		assertEquals("M", persistedPerson.getGender());
+	}
+
+	@Test
+	@Order(4)
 	public void testFindById() throws JsonProcessingException {
 		mockPerson();
 
 		var content = given().spec(specification)
-				.header(TestConfigs.HEADER_PARAM_ORIGIN, "http://localhost:8080")
 				.contentType(TestConfigs.CONTENT_TYPE_XML)
 				.accept(TestConfigs.CONTENT_TYPE_XML)
 				.pathParam("id", person.getPersonId())
@@ -153,6 +183,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 		assertNotNull(persistedPerson.getLastName());
 		assertNotNull(persistedPerson.getAddress());
 		assertNotNull(persistedPerson.getGender());
+		assertFalse(persistedPerson.getEnabled());
 
 		assertEquals(person.getPersonId(), persistedPerson.getPersonId());
 		assertEquals("Willian", persistedPerson.getFirstName());
@@ -162,7 +193,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 	}
 
 	@Test
-	@Order(4)
+	@Order(5)
 	public void testDelete() {
 
 		given().spec(specification)
@@ -174,7 +205,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 	}
 
 	@Test
-	@Order(5)
+	@Order(6)
 	public void testFindAll() throws JsonProcessingException {
 		mockPerson();
 
@@ -193,6 +224,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 		assertNotNull(personOne.getLastName());
 		assertNotNull(personOne.getAddress());
 		assertNotNull(personOne.getGender());
+		assertTrue(personOne.getEnabled());
 
 		assertEquals(1, personOne.getPersonId());
 		assertEquals("João", personOne.getFirstName());
@@ -207,6 +239,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 		assertNotNull(personSix.getLastName());
 		assertNotNull(personSix.getAddress());
 		assertNotNull(personSix.getGender());
+		assertTrue(personSix.getEnabled());
 
 		assertEquals(6, personSix.getPersonId());
 		assertEquals("Joaquim", personSix.getFirstName());
@@ -216,7 +249,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 	}
 
 	@Test
-	@Order(6)
+	@Order(7)
 	public void testFindAllWithoutToken() {
 		mockPerson();
 
@@ -238,5 +271,6 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 		person.setLastName("DubGod");
 		person.setAddress("Brasil");
 		person.setGender("M");
+		person.setEnabled(true);
 	}
 }

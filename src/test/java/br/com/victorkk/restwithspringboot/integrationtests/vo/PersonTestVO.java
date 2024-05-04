@@ -13,14 +13,11 @@ public class PersonTestVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long personId;
-
     private String firstName;
-
     private String lastName;
-
     private String address;
-
     private String gender;
+    private Boolean enabled;
 
     public PersonTestVO() {}
 
@@ -62,16 +59,20 @@ public class PersonTestVO implements Serializable {
         this.lastName = lastName;
     }
 
+    public Boolean getEnabled() { return enabled; }
+
+    public void setEnabled(Boolean enabled) { this.enabled = enabled; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PersonTestVO person = (PersonTestVO) o;
-        return Objects.equals(personId, person.personId) && Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && Objects.equals(address, person.address) && Objects.equals(gender, person.gender);
+        PersonTestVO that = (PersonTestVO) o;
+        return Objects.equals(personId, that.personId) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(address, that.address) && Objects.equals(gender, that.gender) && Objects.equals(enabled, that.enabled);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(personId, firstName, lastName, address, gender);
+        return Objects.hash(personId, firstName, lastName, address, gender, enabled);
     }
 }
