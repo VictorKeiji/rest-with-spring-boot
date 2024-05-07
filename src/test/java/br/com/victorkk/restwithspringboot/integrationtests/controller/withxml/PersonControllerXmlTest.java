@@ -9,8 +9,9 @@ import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
-import java.util.List;
 
+import br.com.victorkk.restwithspringboot.integrationtests.vo.Wrappers.WrapperPersonVO;
+import br.com.victorkk.restwithspringboot.integrationtests.vo.pagedmodels.PagedModelPerson;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
@@ -19,9 +20,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
@@ -212,10 +211,59 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 		var content = given().spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_XML)
 				.accept(TestConfigs.CONTENT_TYPE_XML)
+				.queryParams("page", 3, "size", 10, "direction", "asc")
 				.when().get()
 				.then().statusCode(200).extract().body().asString();
 
-		List<PersonTestVO> people = objectMapper.readValue(content, new TypeReference<List<PersonTestVO>>() {});
+		PagedModelPerson wrapper = objectMapper.readValue(content, PagedModelPerson.class);
+		var people = wrapper.getContent();
+
+		PersonTestVO personOne = people.get(0);
+
+		assertNotNull(personOne.getPersonId());
+		assertNotNull(personOne.getFirstName());
+		assertNotNull(personOne.getLastName());
+		assertNotNull(personOne.getAddress());
+		assertNotNull(personOne.getGender());
+		assertFalse(personOne.getEnabled());
+
+		assertEquals(31, personOne.getPersonId());
+		assertEquals("Neddie", personOne.getFirstName());
+		assertEquals("Peotz", personOne.getLastName());
+		assertEquals("641 Bunker Hill Hill", personOne.getAddress());
+		assertEquals("M", personOne.getGender());
+
+		PersonTestVO personSix = people.get(5);
+
+		assertNotNull(personSix.getPersonId());
+		assertNotNull(personSix.getFirstName());
+		assertNotNull(personSix.getLastName());
+		assertNotNull(personSix.getAddress());
+		assertNotNull(personSix.getGender());
+		assertFalse(personSix.getEnabled());
+
+		assertEquals(36, personSix.getPersonId());
+		assertEquals("Elena", personSix.getFirstName());
+		assertEquals("Tash", personSix.getLastName());
+		assertEquals("3991 Washington Circle", personSix.getAddress());
+		assertEquals("F", personSix.getGender());
+	}
+
+	@Test
+	@Order(7)
+	public void testFindByName() throws JsonProcessingException {
+		mockPerson();
+
+		var content = given().spec(specification)
+				.contentType(TestConfigs.CONTENT_TYPE_XML)
+				.accept(TestConfigs.CONTENT_TYPE_XML)
+				.pathParam("firstName", "iul")
+				.queryParams("page", 0, "size", 6, "direction", "asc")
+				.when().get("findPersonByName/{firstName}")
+				.then().statusCode(200).extract().body().asString();
+
+		PagedModelPerson wrapper = objectMapper.readValue(content, PagedModelPerson.class);
+		var people = wrapper.getContent();
 
 		PersonTestVO personOne = people.get(0);
 
@@ -226,30 +274,15 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 		assertNotNull(personOne.getGender());
 		assertTrue(personOne.getEnabled());
 
-		assertEquals(1, personOne.getPersonId());
-		assertEquals("João", personOne.getFirstName());
-		assertEquals("Paulo", personOne.getLastName());
+		assertEquals(10, personOne.getPersonId());
+		assertEquals("Giuliano", personOne.getFirstName());
+		assertEquals("Victor", personOne.getLastName());
 		assertEquals("Brasil", personOne.getAddress());
 		assertEquals("M", personOne.getGender());
-
-		PersonTestVO personSix = people.get(5);
-
-		assertNotNull(personSix.getPersonId());
-		assertNotNull(personSix.getFirstName());
-		assertNotNull(personSix.getLastName());
-		assertNotNull(personSix.getAddress());
-		assertNotNull(personSix.getGender());
-		assertTrue(personSix.getEnabled());
-
-		assertEquals(6, personSix.getPersonId());
-		assertEquals("Joaquim", personSix.getFirstName());
-		assertEquals("Henrique", personSix.getLastName());
-		assertEquals("Brasil", personSix.getAddress());
-		assertEquals("M", personSix.getGender());
 	}
 
 	@Test
-	@Order(7)
+	@Order(8)
 	public void testFindAllWithoutToken() {
 		mockPerson();
 

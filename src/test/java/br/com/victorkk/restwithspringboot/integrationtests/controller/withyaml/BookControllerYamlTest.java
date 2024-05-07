@@ -15,6 +15,7 @@ import br.com.victorkk.restwithspringboot.integrationtests.testcontainers.Abstra
 import br.com.victorkk.restwithspringboot.integrationtests.vo.AccountCredentialsTestVO;
 import br.com.victorkk.restwithspringboot.integrationtests.vo.BookTestVO;
 import br.com.victorkk.restwithspringboot.integrationtests.vo.TokenTestVO;
+import br.com.victorkk.restwithspringboot.integrationtests.vo.pagedmodels.PagedModelBook;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
@@ -218,38 +219,39 @@ public class BookControllerYamlTest extends AbstractIntegrationTest {
                 .spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_YML)
                 .accept(TestConfigs.CONTENT_TYPE_YML)
+                .queryParams("page", 1 , "size", 5, "direction", "asc")
                 .when()
                 .get()
                 .then()
                 .statusCode(200)
                 .extract()
                 .body()
-                .as(BookTestVO[].class, objectMapper);
+                .as(PagedModelBook.class, objectMapper);
 
 
-        List<BookTestVO> content = Arrays.asList(response);
+        List<BookTestVO> books = response.getContent();
 
-        BookTestVO foundBookOne = content.get(0);
+        BookTestVO foundBookOne = books.get(0);
 
         assertNotNull(foundBookOne.getBookId());
         assertNotNull(foundBookOne.getTitle());
         assertNotNull(foundBookOne.getAuthor());
         assertNotNull(foundBookOne.getPrice());
         assertTrue(foundBookOne.getBookId() > 0);
-        assertEquals("Working effectively with legacy code", foundBookOne.getTitle());
-        assertEquals("Michael C. Feathers", foundBookOne.getAuthor());
-        assertEquals(49.00, foundBookOne.getPrice());
+        assertEquals("Refactoring", foundBookOne.getTitle());
+        assertEquals("Martin Fowler e Kent Beck", foundBookOne.getAuthor());
+        assertEquals(88.00, foundBookOne.getPrice());
 
-        BookTestVO foundBookFive = content.get(4);
+        BookTestVO foundBookFive = books.get(4);
 
         assertNotNull(foundBookFive.getBookId());
         assertNotNull(foundBookFive.getTitle());
         assertNotNull(foundBookFive.getAuthor());
         assertNotNull(foundBookFive.getPrice());
         assertTrue(foundBookFive.getBookId() > 0);
-        assertEquals("Code complete", foundBookFive.getTitle());
-        assertEquals("Steve McConnell", foundBookFive.getAuthor());
-        assertEquals(58.0, foundBookFive.getPrice());
+        assertEquals("O poder dos quietos", foundBookFive.getTitle());
+        assertEquals("Susan Cain", foundBookFive.getAuthor());
+        assertEquals(123.0, foundBookFive.getPrice());
     }
 
     private void mockBook() {
