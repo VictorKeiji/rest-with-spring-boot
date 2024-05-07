@@ -1,9 +1,11 @@
 cors:
   originPatterns: http://localhost:8080,http://localhost:3000
+file:
+  upload-dir: /home/victor/projetos/rest-with-spring-boot/uploads
 security:
   jwt:
     token:
-      secret-key: 53ccr37
+      secret-key: 53cr37
       expire-length: 3600000
 spring:
   datasource:
@@ -15,6 +17,12 @@ spring:
       # hibernate:
         # dialect: org.hibernate.dialect.MySQLDialect
     show_sql: false
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 200MB
+      max-request-size: 215MB
 spring-doc:
   pathsToMatch:
     - /auth/**
