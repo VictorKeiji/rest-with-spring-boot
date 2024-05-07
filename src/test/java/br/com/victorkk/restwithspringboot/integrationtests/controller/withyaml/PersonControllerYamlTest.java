@@ -6,6 +6,8 @@ import br.com.victorkk.restwithspringboot.integrationtests.testcontainers.Abstra
 import br.com.victorkk.restwithspringboot.integrationtests.vo.AccountCredentialsTestVO;
 import br.com.victorkk.restwithspringboot.integrationtests.vo.PersonTestVO;
 import br.com.victorkk.restwithspringboot.integrationtests.vo.TokenTestVO;
+import br.com.victorkk.restwithspringboot.integrationtests.vo.Wrappers.WrapperPersonVO;
+import br.com.victorkk.restwithspringboot.integrationtests.vo.pagedmodels.PagedModelPerson;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.config.EncoderConfig;
 import io.restassured.config.RestAssuredConfig;
@@ -18,8 +20,6 @@ import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
@@ -215,16 +215,66 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 	public void testFindAll() throws IOException {
 		mockPerson();
 
-		var content = given().spec(specification)
+		var wrapper = given().spec(specification)
 				.config(RestAssuredConfig.config().encoderConfig(
 						EncoderConfig.encoderConfig()
 								.encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)))
 				.contentType(TestConfigs.CONTENT_TYPE_YML)
 				.accept(TestConfigs.CONTENT_TYPE_YML)
+				.queryParams("page", 3, "size", 10, "direction", "asc")
 				.when().get()
-				.then().statusCode(200).extract().body().as(PersonTestVO[].class, objectMapper);
+				.then().statusCode(200).extract().body().as(PagedModelPerson.class, objectMapper);
 
-		List<PersonTestVO> people = Arrays.asList(content);
+		var people = wrapper.getContent();
+
+		PersonTestVO personOne = people.get(0);
+
+		assertNotNull(personOne.getPersonId());
+		assertNotNull(personOne.getFirstName());
+		assertNotNull(personOne.getLastName());
+		assertNotNull(personOne.getAddress());
+		assertNotNull(personOne.getGender());
+		assertFalse(personOne.getEnabled());
+
+		assertEquals(31, personOne.getPersonId());
+		assertEquals("Neddie", personOne.getFirstName());
+		assertEquals("Peotz", personOne.getLastName());
+		assertEquals("641 Bunker Hill Hill", personOne.getAddress());
+		assertEquals("M", personOne.getGender());
+
+		PersonTestVO personSix = people.get(5);
+
+		assertNotNull(personSix.getPersonId());
+		assertNotNull(personSix.getFirstName());
+		assertNotNull(personSix.getLastName());
+		assertNotNull(personSix.getAddress());
+		assertNotNull(personSix.getGender());
+		assertFalse(personSix.getEnabled());
+
+		assertEquals(36, personSix.getPersonId());
+		assertEquals("Elena", personSix.getFirstName());
+		assertEquals("Tash", personSix.getLastName());
+		assertEquals("3991 Washington Circle", personSix.getAddress());
+		assertEquals("F", personSix.getGender());
+	}
+
+	@Test
+	@Order(7)
+	public void testFindByName() {
+		mockPerson();
+
+		var wrapper = given().spec(specification)
+				.config(RestAssuredConfig.config().encoderConfig(
+						EncoderConfig.encoderConfig()
+								.encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)))
+				.contentType(TestConfigs.CONTENT_TYPE_YML)
+				.accept(TestConfigs.CONTENT_TYPE_YML)
+				.pathParam("firstName", "iul")
+				.queryParams("page", 0, "size", 6, "direction", "asc")
+				.when().get("findPersonByName/{firstName}")
+				.then().statusCode(200).extract().body().as(PagedModelPerson.class, objectMapper);
+
+		var people = wrapper.getContent();
 
 		PersonTestVO personOne = people.get(0);
 
@@ -235,30 +285,15 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 		assertNotNull(personOne.getGender());
 		assertTrue(personOne.getEnabled());
 
-		assertEquals(1, personOne.getPersonId());
-		assertEquals("João", personOne.getFirstName());
-		assertEquals("Paulo", personOne.getLastName());
+		assertEquals(10, personOne.getPersonId());
+		assertEquals("Giuliano", personOne.getFirstName());
+		assertEquals("Victor", personOne.getLastName());
 		assertEquals("Brasil", personOne.getAddress());
 		assertEquals("M", personOne.getGender());
-
-		PersonTestVO personSix = people.get(5);
-
-		assertNotNull(personSix.getPersonId());
-		assertNotNull(personSix.getFirstName());
-		assertNotNull(personSix.getLastName());
-		assertNotNull(personSix.getAddress());
-		assertNotNull(personSix.getGender());
-		assertTrue(personSix.getEnabled());
-
-		assertEquals(6, personSix.getPersonId());
-		assertEquals("Joaquim", personSix.getFirstName());
-		assertEquals("Henrique", personSix.getLastName());
-		assertEquals("Brasil", personSix.getAddress());
-		assertEquals("M", personSix.getGender());
 	}
 
 	@Test
-	@Order(7)
+	@Order(8)
 	public void testFindAllWithoutToken() {
 		mockPerson();
 

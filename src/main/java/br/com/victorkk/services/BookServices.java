@@ -7,9 +7,13 @@ import br.com.victorkk.exceptions.ResourceNotFoundException;
 import br.com.victorkk.mapper.MyMapper;
 import br.com.victorkk.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -23,14 +27,21 @@ public class BookServices {
     @Autowired
     BookRepository repository;
 
-    public List<BookVO> findAll() {
+    @Autowired
+    PagedResourcesAssembler<BookVO> assembler;
+
+    public PagedModel<EntityModel<BookVO>> findAll(Pageable pageable) {
         logger.info("Finding all books!");
 
-        var books = MyMapper.INSTANCE.parseListBookVOs(repository.findAll());
-
-        books.forEach(
+        var bookPage = repository.findAll(pageable);
+        var bookVOsPage = bookPage.map(b -> MyMapper.INSTANCE.bookToBookVO(b));
+        bookVOsPage.map(
                 b -> b.add(linkTo(methodOn(BookController.class).findById(b.getBookId())).withSelfRel()));
-        return books;
+
+        Link link = linkTo(
+                methodOn(BookController.class)
+                        .findAll(pageable.getPageNumber(), pageable.getPageSize(), "asc")).withSelfRel();
+        return assembler.toModel(bookVOsPage, link);
     }
 
     public BookVO findById(Long id) {
