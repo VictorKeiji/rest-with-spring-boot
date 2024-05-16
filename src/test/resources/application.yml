@@ -1,7 +1,7 @@
 cors:
   originPatterns: http://localhost:8080,http://localhost:3000
 file:
-  upload-dir: /home/victor/projetos/rest-with-spring-boot/uploads
+  upload-dir: /home/runner/work/rest-with-spring-boot/uploads
 security:
   jwt:
     token:
