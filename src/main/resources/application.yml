@@ -1,5 +1,5 @@
 cors:
-  originPatterns: http://localhost:8080,http://localhost:3000
+  originPatterns: http://localhost:8080,http://localhost:3000,http://localhost:80
 file:
   upload-dir: /home/victor/projetos/rest-with-spring-boot/uploads
 security:
@@ -32,3 +32,5 @@ spring-doc:
     - /api/**/v1/**
   swagger-ui:
     use-root-path: true
+server:
+  port: 80
